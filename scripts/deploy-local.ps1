@@ -38,26 +38,7 @@ try {
     # 4. Deploy dos recursos Kubernetes
     Write-Host "☸️  4/4: Deployando recursos Kubernetes..." -ForegroundColor Yellow
     Push-Location $K8S_DIR
-    
-    Write-Host 'Aplicando namespace...'
-    kubectl apply -f namespaces/
-    
-    Write-Host 'Aplicando RabbitMQ...'
-    kubectl apply -f rabbitmq/
-    
-    Write-Host 'Aplicando Users API...'
-    kubectl apply -f users-api/
-    
-    Write-Host 'Aplicando Catalog API...'
-    kubectl apply -f catalog-api/
-    
-    # Payments e Notifications quando estiverem prontos
-    # Write-Host 'Aplicando Payments API...'
-    # kubectl apply -f payments-api/
-    
-    # Write-Host 'Aplicando Notifications API...'
-    # kubectl apply -f notifications-api/
-    
+    & "$K8S_DIR\apply-all.ps1"
     Pop-Location
     Write-Host ""
 
