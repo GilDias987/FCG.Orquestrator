@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-api-deployment
+  labels:
+    app: users-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users-api
+  template:
+    metadata:
+      labels:
+        app: users-api
+    spec:
+      containers:
+        - name: users-api
+          image: users-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Development"
+            - name: ASPNETCORE_URLS
+              value: "http://+:8080"
+            - name: ConnectionStrings__DefaultConnection
+              valueFrom:
+                secretKeyRef:
+                  name: users-api-secret
+                  key: connectionString
+            - name: Jwt__Issuer
+              valueFrom:
+                secretKeyRef:
+                  name: users-api-secret
+                  key: jwtIssuer
+            - name: Jwt__Key
+              valueFrom:
+                secretKeyRef:
+                  name: users-api-secret
+                  key: jwtKey
+            - name: Rabbit__Host
+              valueFrom:
+                configMapKeyRef:
+                  name: users-api-config
+                  key: rabbitHost

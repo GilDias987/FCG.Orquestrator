@@ -1,0 +1,97 @@
+services:
+  # Catalog API
+  catalog-api:
+    build:
+      context: ../FCG.Catalog/FCG.Catalog
+      dockerfile: FCG.Catalog.WebAPI/Dockerfile
+    container_name: catalog-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=catalog-sqlserver;Database=FCGCatalog;User Id=sa;Password=pass@123;TrustServerCertificate=True
+      - Jwt__Issuer=fcg-catalog
+      - Jwt__Key=super_secret_dev_key_change_me
+      - Rabbit__Host=rabbitmq
+    ports:
+      - "8081:8080"
+    depends_on:
+      - catalog-sqlserver
+      - rabbitmq
+    networks:
+      - fcg-net
+
+  # SQL Server - Catalog
+  catalog-sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: catalog-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=pass@123
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    networks:
+      - fcg-net
+    volumes:
+      - catalog-sqlserver-data:/var/opt/mssql
+
+  # Users API
+  users-api:
+    build:
+      context: ../FCG.Users/FCG.Users
+      dockerfile: FCG.Users.WebAPI/Dockerfile
+    container_name: users-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=users-sqlserver;Database=FCGUsers;User Id=sa;Password=pass@123;TrustServerCertificate=True
+      - Jwt__Issuer=fcg-users
+      - Jwt__Key=super_secret_dev_key_change_me
+      - Rabbit__Host=rabbitmq
+    ports:
+      - "8080:8080"
+    depends_on:
+      - users-sqlserver
+      - rabbitmq
+    networks:
+      - fcg-net
+
+
+  # SQL Server - Users
+  users-sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: users-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=pass@123
+      - MSSQL_PID=Developer
+    ports:
+      - "1434:1433"
+    networks:
+      - fcg-net
+    volumes:
+      - users-sqlserver-data:/var/opt/mssql
+
+  # RabbitMQ (compartilhado)
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: fcg-rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin123
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - fcg-net
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+volumes:
+  catalog-sqlserver-data:
+  users-sqlserver-data:
+  rabbitmq-data:
+
+networks:
+  fcg-net:
+    driver: bridge
