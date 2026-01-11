@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fcg-namespace
+  labels:
+    name: fcg-namespace
+  annotations:
+    istio-injection: enabled

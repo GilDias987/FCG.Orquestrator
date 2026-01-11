@@ -63,6 +63,36 @@ try {
     Write-Host "Esperando os pods ficarem prontos..." -ForegroundColor Yellow
     
     $timeout = 120
+    
+    Write-Host "Aguardando SQL Servers..." -ForegroundColor Gray
+    kubectl wait --for=condition=ready pod -l app=catalog-sqlserver --timeout="${timeout}s" 2>$null
+    if ($LASTEXITCODE -eq 0) { 
+        Write-Host "Catalog SQL Server pronto" -ForegroundColor Green 
+    } else {
+        Write-Host "Catalog SQL Server pode demorar mais..." -ForegroundColor Yellow 
+    }
+    
+    kubectl wait --for=condition=ready pod -l app=users-sqlserver --timeout="${timeout}s" 2>$null
+    if ($LASTEXITCODE -eq 0) { 
+        Write-Host "Users SQL Server pronto" -ForegroundColor Green 
+    } else {
+        Write-Host "Users SQL Server pode demorar mais..." -ForegroundColor Yellow 
+    }
+
+    # kubectl wait --for=condition=ready pod -l app=payments-sqlserver --timeout="${timeout}s" 2>$null
+    # if ($LASTEXITCODE -eq 0) { 
+    #     Write-Host "Payments SQL Server pronto" -ForegroundColor Green
+    # } else {
+    #     Write-Host "Payments SQL Server pode demorar mais..." -ForegroundColor Yellow
+    # }
+    
+    # kubectl wait --for=condition=ready pod -l app=notifications-sqlserver --timeout="${timeout}s" 2>$null
+    # if ($LASTEXITCODE -eq 0) {
+    #     Write-Host "Notifications SQL Server pronto" -ForegroundColor Green
+    # } else {
+    #     Write-Host "Notifications SQL Server pode demorar mais..." -ForegroundColor Yellow
+    # }
+
     Write-Host "Aguardando RabbitMQ..." -ForegroundColor Gray
     kubectl wait --for=condition=ready pod -l app=rabbitmq --timeout="${timeout}s" 2>$null
     if ($LASTEXITCODE -eq 0) { 

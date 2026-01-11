@@ -11,6 +11,12 @@ try {
     Write-Host "`nAplicando namespace..." -ForegroundColor Yellow
     kubectl apply -f namespaces/
 
+    Write-Host "`nAplicando SQL Servers..." -ForegroundColor Yellow
+    kubectl apply -f catalog-sqlserver/
+    kubectl apply -f users-sqlserver/
+    # kubectl apply -f payments-sqlserver/
+    # kubectl apply -f notifications-sqlserver/
+
     Write-Host "`nAplicando RabbitMQ..." -ForegroundColor Yellow
     kubectl apply -f rabbitmq/
 
