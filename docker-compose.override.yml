@@ -1,0 +1,11 @@
+# Este arquivo pode ser usado para sobrescrever configurações específicas de ambiente
+# Por exemplo, para desenvolvimento local, staging, etc.
+
+services:
+  catalog-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    
+  users-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development

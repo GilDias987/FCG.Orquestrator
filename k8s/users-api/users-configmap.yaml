@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: users-api-config
+  labels:
+    app: users-api
+data:
+  rabbitHost: "rabbitmq"
+
+  # colocar nome das filas aqui quando tiver mais detalhes
