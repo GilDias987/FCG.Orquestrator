@@ -64,57 +64,58 @@ try {
     
     $timeout = 120
     
-    Write-Host "Aguardando SQL Servers..." -ForegroundColor Gray
-    kubectl wait --for=condition=ready pod -l app=catalog-sqlserver --timeout="${timeout}s" 2>$null
+    Write-Host "`nAguardando SQL Servers..." -ForegroundColor Yellow
+    Write-Host "(SQL Servers podem levar ate 2 minutos para inicializar...)" -ForegroundColor Gray
+    
+    kubectl wait --for=condition=ready pod -l app=catalog-sqlserver --timeout="${sqlTimeout}s" 2>$null
     if ($LASTEXITCODE -eq 0) { 
-        Write-Host "Catalog SQL Server pronto" -ForegroundColor Green 
+        Write-Host "  Catalog SQL Server pronto" -ForegroundColor Green 
     } else {
-        Write-Host "Catalog SQL Server pode demorar mais..." -ForegroundColor Yellow 
+        Write-Host "  Catalog SQL Server ainda inicializando (verifique: kubectl get pods)" -ForegroundColor Yellow 
     }
     
-    kubectl wait --for=condition=ready pod -l app=users-sqlserver --timeout="${timeout}s" 2>$null
+    kubectl wait --for=condition=ready pod -l app=users-sqlserver --timeout="${sqlTimeout}s" 2>$null
     if ($LASTEXITCODE -eq 0) { 
-        Write-Host "Users SQL Server pronto" -ForegroundColor Green 
+        Write-Host "  Users SQL Server pronto" -ForegroundColor Green 
     } else {
-        Write-Host "Users SQL Server pode demorar mais..." -ForegroundColor Yellow 
+        Write-Host "  Users SQL Server ainda inicializando (verifique: kubectl get pods)" -ForegroundColor Yellow 
     }
 
-    # kubectl wait --for=condition=ready pod -l app=payments-sqlserver --timeout="${timeout}s" 2>$null
+    # kubectl wait --for=condition=ready pod -l app=payments-sqlserver --timeout="${sqlTimeout}s" 2>$null
     # if ($LASTEXITCODE -eq 0) { 
-    #     Write-Host "Payments SQL Server pronto" -ForegroundColor Green
+    #     Write-Host "  Payments SQL Server pronto" -ForegroundColor Green
     # } else {
-    #     Write-Host "Payments SQL Server pode demorar mais..." -ForegroundColor Yellow
+    #     Write-Host "  Payments SQL Server ainda inicializando" -ForegroundColor Yellow
     # }
     
-    # kubectl wait --for=condition=ready pod -l app=notifications-sqlserver --timeout="${timeout}s" 2>$null
+    # kubectl wait --for=condition=ready pod -l app=notifications-sqlserver --timeout="${sqlTimeout}s" 2>$null
     # if ($LASTEXITCODE -eq 0) {
-    #     Write-Host "Notifications SQL Server pronto" -ForegroundColor Green
+    #     Write-Host "  Notifications SQL Server pronto" -ForegroundColor Green
     # } else {
-    #     Write-Host "Notifications SQL Server pode demorar mais..." -ForegroundColor Yellow
+    #     Write-Host "  Notifications SQL Server ainda inicializando" -ForegroundColor Yellow
     # }
 
-    Write-Host "Aguardando RabbitMQ..." -ForegroundColor Gray
-    kubectl wait --for=condition=ready pod -l app=rabbitmq --timeout="${timeout}s" 2>$null
+    Write-Host "`nAguardando RabbitMQ..." -ForegroundColor Yellow
+    kubectl wait --for=condition=ready pod -l app=rabbitmq --timeout="${appTimeout}s" 2>$null
     if ($LASTEXITCODE -eq 0) { 
-        Write-Host "RabbitMQ pronto" -ForegroundColor Green 
+        Write-Host "  RabbitMQ pronto" -ForegroundColor Green 
     } else {
-        Write-Host "RabbitMQ pode demorar mais..." -ForegroundColor Yellow 
+        Write-Host "  RabbitMQ ainda inicializando" -ForegroundColor Yellow 
     }
     
-    Write-Host "Aguardando Catalog API..." -ForegroundColor Gray
-    kubectl wait --for=condition=ready pod -l app=catalog-api --timeout="${timeout}s" 2>$null
+    Write-Host "`nAguardando APIs..." -ForegroundColor Yellow
+    kubectl wait --for=condition=ready pod -l app=catalog-api --timeout="${appTimeout}s" 2>$null
     if ($LASTEXITCODE -eq 0) { 
-        Write-Host "Catalog API pronto" -ForegroundColor Green 
+        Write-Host "  Catalog API pronto" -ForegroundColor Green 
     } else {
-        Write-Host "Catalog API pode demorar mais..." -ForegroundColor Yellow 
+        Write-Host "  Catalog API ainda inicializando" -ForegroundColor Yellow 
     }
     
-    Write-Host "Aguardando Users API..." -ForegroundColor Gray
-    kubectl wait --for=condition=ready pod -l app=users-api --timeout="${timeout}s" 2>$null
+    kubectl wait --for=condition=ready pod -l app=users-api --timeout="${appTimeout}s" 2>$null
     if ($LASTEXITCODE -eq 0) { 
-        Write-Host "Users API pronto" -ForegroundColor Green 
+        Write-Host "  Users API pronto" -ForegroundColor Green 
     } else {
-        Write-Host "Users API pode demorar mais..." -ForegroundColor Yellow 
+        Write-Host "  Users API ainda inicializando" -ForegroundColor Yellow 
     }
     Write-Host ""
 
