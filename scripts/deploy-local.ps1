@@ -23,9 +23,6 @@ $missingTools = @()
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
     $missingTools += "docker"
 }
-if (-not (Get-Command kind -ErrorAction SilentlyContinue)) {
-    $missingTools += "kind"
-}
 if (-not (Get-Command kubectl -ErrorAction SilentlyContinue)) {
     $missingTools += "kubectl"
 }
