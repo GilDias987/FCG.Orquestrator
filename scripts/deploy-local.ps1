@@ -40,16 +40,16 @@ try {
     if ($LASTEXITCODE -ne 0) { Show-Error "Falha ao buildar imagens" }
     Write-Host ""
 
-    # 2. Criar cluster Kind
-    Write-Host "2/4: Criando cluster Kind..." -ForegroundColor Yellow
+    # 2. Verificar cluster Kubernetes
+    Write-Host "2/4: Verificando cluster Kubernetes..." -ForegroundColor Yellow
     & "$SCRIPT_DIR\kind-create-cluster.ps1"
-    if ($LASTEXITCODE -ne 0) { Show-Error "Falha ao criar cluster" }
+    if ($LASTEXITCODE -ne 0) { Show-Error "Falha ao verificar cluster" }
     Write-Host ""
 
-    # 3. Carregar imagens no Kind
-    Write-Host "3/4: Carregando imagens no cluster Kind..." -ForegroundColor Yellow
+    # 3. Verificar imagens Docker
+    Write-Host "3/4: Verificando imagens Docker..." -ForegroundColor Yellow
     & "$SCRIPT_DIR\push-images.ps1"
-    if ($LASTEXITCODE -ne 0) { Show-Error "Falha ao carregar imagens" }
+    if ($LASTEXITCODE -ne 0) { Show-Error "Falha ao verificar imagens" }
     Write-Host ""
 
     # 4. Deploy dos recursos Kubernetes
@@ -107,7 +107,7 @@ try {
     Write-Host "  - Ver pods:        kubectl get pods"
     Write-Host "  - Ver services:    kubectl get svc"
     Write-Host "  - Ver logs:        kubectl logs <pod-name>"
-    Write-Host "  - Deletar cluster: kind delete cluster --name fcg-cluster"
+    Write-Host "  - Limpar deploy:   kubectl delete all --all"
     Write-Host ""
 }
 catch {

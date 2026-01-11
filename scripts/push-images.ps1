@@ -1,39 +1,41 @@
-# Carregar Imagens no Cluster Kind
+# Verificar Imagens Docker
 # PowerShell Script
 
 Write-Host "======================================" -ForegroundColor Cyan
-Write-Host "Carregando Imagens no Cluster" -ForegroundColor Cyan
+Write-Host "Verificando Imagens Docker" -ForegroundColor Cyan
 Write-Host "======================================" -ForegroundColor Cyan
 
 $ErrorActionPreference = "Stop"
-$CLUSTER_NAME = "fcg-cluster"
 
 try {
-    # Carrega Catalog API
-    Write-Host "`nCarregando catalog-api:latest..." -ForegroundColor Yellow
-    kind load docker-image catalog-api:latest --name $CLUSTER_NAME
+    # Verifica Catalog API
+    Write-Host "`nVerificando catalog-api:latest..." -ForegroundColor Yellow
+    $catalogImage = docker images catalog-api:latest --format "{{.Repository}}:{{.Tag}}" 2>$null
     
-    if ($LASTEXITCODE -ne 0) {
-        throw "Falha ao carregar catalog-api"
+    if ([string]::IsNullOrEmpty($catalogImage)) {
+        throw "Imagem catalog-api:latest não encontrada"
     }
+    Write-Host "✓ catalog-api:latest encontrada" -ForegroundColor Green
 
-    # Carrega Users API
-    Write-Host "Carregando users-api:latest..." -ForegroundColor Yellow
-    kind load docker-image users-api:latest --name $CLUSTER_NAME
+    # Verifica Users API
+    Write-Host "Verificando users-api:latest..." -ForegroundColor Yellow
+    $usersImage = docker images users-api:latest --format "{{.Repository}}:{{.Tag}}" 2>$null
     
-    if ($LASTEXITCODE -ne 0) {
-        throw "Falha ao carregar users-api"
+    if ([string]::IsNullOrEmpty($usersImage)) {
+        throw "Imagem users-api:latest não encontrada"
     }
+    Write-Host "✓ users-api:latest encontrada" -ForegroundColor Green
 
     # TODO: Uncomment when Payments API is ready
-    # Write-Host "Carregando payments-api:latest..." -ForegroundColor Yellow
-    # kind load docker-image payments-api:latest --name $CLUSTER_NAME
+    # Write-Host "Verificando payments-api:latest..." -ForegroundColor Yellow
+    # $paymentsImage = docker images payments-api:latest --format "{{.Repository}}:{{.Tag}}" 2>$null
 
     # TODO: Uncomment when Notifications API is ready
-    # Write-Host "Carregando notifications-api:latest..." -ForegroundColor Yellow
-    # kind load docker-image notifications-api:latest --name $CLUSTER_NAME
+    # Write-Host "Verificando notifications-api:latest..." -ForegroundColor Yellow
+    # $notificationsImage = docker images notifications-api:latest --format "{{.Repository}}:{{.Tag}}" 2>$null
 
-    Write-Host "`n✅ Todas as imagens foram carregadas no cluster com sucesso!" -ForegroundColor Green
+    Write-Host "`n✅ Todas as imagens estão disponíveis!" -ForegroundColor Green
+    Write-Host "`nNota: Com Docker Desktop Kubernetes, as imagens locais são automaticamente disponíveis no cluster" -ForegroundColor Gray
 }
 catch {
     Write-Host "`n❌ Erro: $_" -ForegroundColor Red

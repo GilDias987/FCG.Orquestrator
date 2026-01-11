@@ -1,58 +1,43 @@
-# Criar Cluster Kind
+# Verificar Cluster Kubernetes
 # PowerShell Script
 
 Write-Host "======================================" -ForegroundColor Cyan
-Write-Host "Criando Cluster Kind" -ForegroundColor Cyan
+Write-Host "Verificando Cluster Kubernetes" -ForegroundColor Cyan
 Write-Host "======================================" -ForegroundColor Cyan
 
 $ErrorActionPreference = "Stop"
-$CLUSTER_NAME = "fcg-cluster"
 
 try {
-    # Verifica se o cluster já existe
-    $existingClusters = kind get clusters 2>$null
-    if ($existingClusters -contains $CLUSTER_NAME) {
-        Write-Host "`n⚠️  Cluster '$CLUSTER_NAME' já existe. Deletando..." -ForegroundColor Yellow
-        kind delete cluster --name $CLUSTER_NAME
-    }
-
-    # Cria o cluster com configuração
-    Write-Host "`nCriando novo cluster..." -ForegroundColor Yellow
+    # Verifica se kubectl está configurado
+    Write-Host "`nVerificando conexão com cluster..." -ForegroundColor Yellow
     
-    $kindConfig = @"
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-nodes:
-- role: control-plane
-  extraPortMappings:
-  - containerPort: 30080
-    hostPort: 30080
-    protocol: TCP
-  - containerPort: 30081
-    hostPort: 30081
-    protocol: TCP
-  - containerPort: 30672
-    hostPort: 30672
-    protocol: TCP
-  - containerPort: 31672
-    hostPort: 31672
-    protocol: TCP
-"@
-
-    $kindConfig | kind create cluster --name $CLUSTER_NAME --config=-
+    $clusterInfo = kubectl cluster-info 2>$null
     
     if ($LASTEXITCODE -ne 0) {
-        throw "Falha ao criar cluster"
+        throw "kubectl não está configurado ou cluster não está disponível"
     }
 
-    Write-Host "`n✅ Cluster '$CLUSTER_NAME' criado com sucesso!" -ForegroundColor Green
-    Write-Host "`nEndpoints:" -ForegroundColor Cyan
+    Write-Host "Cluster conectado!" -ForegroundColor Green
+    Write-Host "`nInformações do cluster:" -ForegroundColor Cyan
+    kubectl cluster-info
+    
+    Write-Host "`nContexto atual:" -ForegroundColor Cyan
+    kubectl config current-context
+    
+    Write-Host "`nNodes disponíveis:" -ForegroundColor Cyan
+    kubectl get nodes
+    
+    Write-Host "`n✅ Cluster Kubernetes está pronto!" -ForegroundColor Green
+    Write-Host "`nEndpoints (NodePort):" -ForegroundColor Cyan
     Write-Host "  - Users API:           http://localhost:30080"
     Write-Host "  - Catalog API:         http://localhost:30081"
     Write-Host "  - RabbitMQ AMQP:       localhost:30672"
     Write-Host "  - RabbitMQ Management: http://localhost:31672"
+    Write-Host "`nNota: Certifique-se de que o Kubernetes do Docker Desktop está habilitado" -ForegroundColor Gray
 }
 catch {
     Write-Host "`n❌ Erro: $_" -ForegroundColor Red
+    Write-Host "`nDica: Habilite o Kubernetes no Docker Desktop:" -ForegroundColor Yellow
+    Write-Host "  Docker Desktop -> Settings -> Kubernetes -> Enable Kubernetes" -ForegroundColor Gray
     exit 1
 }

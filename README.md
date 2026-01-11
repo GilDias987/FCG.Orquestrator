@@ -44,9 +44,9 @@ Seguindo as melhores práticas de microsserviços:
 - [Docker Compose](https://docs.docker.com/compose/install/) (incluído no Docker Desktop)
 
 ### Para Kubernetes Local:
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation)
-- [kubectl](https://kubernetes.io/docs/tasks/tools/)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) com Kubernetes habilitado
+  - Settings → Kubernetes → ☑ Enable Kubernetes
+- kubectl (incluído no Docker Desktop)
 
 ## 🚀 Quick Start
 
@@ -63,10 +63,13 @@ docker-compose logs -f
 docker-compose down
 ```
 
-### Opção 2: Kubernetes Local com Kind
+### Opção 2: Kubernetes Local (Docker Desktop)
 
 ```powershell
-# Deploy completo (build, cluster, deploy) - UM ÚNICO COMANDO!
+# 1. Habilite Kubernetes no Docker Desktop:
+# Docker Desktop → Settings → Kubernetes → Enable Kubernetes
+
+# 2. Deploy completo (build, verificar cluster, deploy) - UM COMANDO!
 .\scripts\deploy-local.ps1
 ```
 
@@ -116,8 +119,8 @@ Execute o script principal que faz tudo:
 
 Este script irá:
 1. ✅ Buildar todas as imagens Docker
-2. ✅ Criar cluster Kind local
-3. ✅ Carregar imagens no cluster (sem registry externo)
+2. ✅ Verificar cluster Kubernetes do Docker Desktop
+3. ✅ Verificar imagens Docker disponíveis
 4. ✅ Aplicar todos os recursos Kubernetes
 5. ✅ Aguardar pods ficarem prontos
 6. ✅ Exibir status e URLs
@@ -130,14 +133,16 @@ Se preferir executar cada etapa manualmente:
 # 1. Build das imagens
 .\scripts\build-images.ps1
 
-# 2. Criar cluster Kind
+# 2. Verificar cluster Kubernetes
 .\scripts\kind-create-cluster.ps1
 
-# 3. Carregar imagens no Kind
+# 3. Verificar imagens disponíveis
 .\scripts\push-images.ps1
 
 # 4. Aplicar recursos Kubernetes
 cd k8s
+.\apply-all.ps1
+# Ou manualmente:
 kubectl apply -f namespaces/
 kubectl apply -f rabbitmq/
 kubectl apply -f users-api/
@@ -162,8 +167,11 @@ kubectl describe pod <pod-name>
 # Executar comando em um pod
 kubectl exec -it <pod-name> -- /bin/bash
 
-# Deletar cluster
-kind delete cluster --name fcg-cluster
+# Limpar todos os recursos
+kubectl delete all --all
+
+# Utilitário kubectl (ver logs, shell, etc)
+.\scripts\kubectl-utils.ps1 status
 ```
 
 ## 📜 Scripts Disponíveis
@@ -174,8 +182,9 @@ kind delete cluster --name fcg-cluster
 |--------|-----------|
 | `deploy-local.ps1` | **Deploy completo automático** |
 | `build-images.ps1` | Build de todas as imagens Docker |
-| `kind-create-cluster.ps1` | Cria cluster Kind com portas mapeadas |
-| `push-images.ps1` | Carrega imagens no Kind (sem registry) |
+| `kind-create-cluster.ps1` | Verifica cluster Kubernetes disponível |
+| `push-images.ps1` | Verifica imagens Docker disponíveis |
+| `kubectl-utils.ps1` | Utilitários kubectl (logs, shell, status, etc) |
 
 ### Bash (Linux/Mac)
 
@@ -183,8 +192,8 @@ kind delete cluster --name fcg-cluster
 |--------|-----------|
 | `deploy-local.sh` | Deploy completo automático |
 | `build-images.sh` | Build de todas as imagens Docker |
-| `kind-create-cluster.sh` | Cria cluster Kind com portas mapeadas |
-| `push-images.sh` | Carrega imagens no Kind (sem registry) |
+| `kind-create-cluster.sh` | Verifica cluster Kubernetes disponível |
+| `push-images.sh` | Verifica imagens Docker disponíveis |
 
 ## 📁 Estrutura do Projeto
 
@@ -215,12 +224,13 @@ FCG.Orquestrator/
 └── scripts/
     ├── deploy-local.ps1            # PowerShell - Deploy completo
     ├── build-images.ps1            # PowerShell - Build
-    ├── kind-create-cluster.ps1     # PowerShell - Cluster
-    ├── push-images.ps1             # PowerShell - Load images
+    ├── kind-create-cluster.ps1     # PowerShell - Verificar cluster
+    ├── push-images.ps1             # PowerShell - Verificar imagens
+    ├── kubectl-utils.ps1           # PowerShell - Utilitários kubectl
     ├── deploy-local.sh             # Bash - Deploy completo
     ├── build-images.sh             # Bash - Build
-    ├── kind-create-cluster.sh      # Bash - Cluster
-    └── push-images.sh              # Bash - Load images
+    ├── kind-create-cluster.sh      # Bash - Verificar cluster
+    └── push-images.sh              # Bash - Verificar imagens
 ```
 
 ## 🌐 URLs de Acesso
@@ -235,7 +245,7 @@ FCG.Orquestrator/
 | SQL Server (Catalog) | localhost:1433 | sa/pass@123 |
 | SQL Server (Users) | localhost:1434 | sa/pass@123 |
 
-### Kubernetes (Kind)
+### Kubernetes (Docker Desktop)
 
 | Serviço | URL | Credenciais |
 |---------|-----|-------------|
@@ -243,6 +253,8 @@ FCG.Orquestrator/
 | Catalog API | http://localhost:30081 | - |
 | RabbitMQ AMQP | localhost:30672 | - |
 | RabbitMQ Management | http://localhost:31672 | admin/admin123 |
+
+**Nota:** As portas NodePort (300xx) funcionam quando o Kubernetes do Docker Desktop está habilitado.
 
 ## 🔧 Configuração
 
@@ -285,8 +297,8 @@ kubectl logs <pod-name> --previous
 # Reiniciar deployment
 kubectl rollout restart deployment catalog-api-deployment
 
-# Deletar e recriar cluster
-kind delete cluster --name fcg-cluster
+# Limpar todos os recursos e redeployar
+kubectl delete all --all
 .\scripts\deploy-local.ps1
 ```
 
@@ -299,10 +311,13 @@ netstat -ano | findstr :8080
 taskkill /PID <PID> /F
 ```
 
-**Imagem não encontrada no Kind:**
+**Imagem não encontrada:**
 ```powershell
-# Recarregar imagens
-.\scripts\push-images.ps1
+# Rebuildar imagens
+.\scripts\build-images.ps1
+
+# Verificar se as imagens existem
+docker images | findstr "catalog-api\|users-api"
 ```
 
 **Pods em CrashLoopBackOff:**
@@ -316,8 +331,21 @@ kubectl describe pod <pod-name>
 
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 - [Kubernetes Documentation](https://kubernetes.io/docs/home/)
-- [Kind Documentation](https://kind.sigs.k8s.io/)
+- [Docker Desktop Kubernetes](https://docs.docker.com/desktop/kubernetes/)
 - [RabbitMQ Documentation](https://www.rabbitmq.com/documentation.html)
+
+## 💡 Dicas
+
+**Por que Docker Desktop Kubernetes?**
+- ✅ Já vem com Docker Desktop (sem instalação extra)
+- ✅ Imagens locais disponíveis automaticamente
+- ✅ Mais simples que Kind ou Minikube
+- ✅ Ideal para desenvolvimento local
+- ✅ 1 click para habilitar
+
+**Quando usar Docker Compose vs Kubernetes?**
+- **Docker Compose**: Desenvolvimento rápido, testes locais simples
+- **Kubernetes**: Validar YAMLs, testar features K8s, ambiente mais próximo de produção
 
 ---
 
