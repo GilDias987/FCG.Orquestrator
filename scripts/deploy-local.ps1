@@ -90,6 +90,33 @@ try {
         Write-Host "⚠️  Users API pode demorar mais..." -ForegroundColor Yellow 
     }
     Write-Host ""
+
+    # Exibir status
+    Write-Host "======================================" -ForegroundColor Green
+    Write-Host "✅ Deployment Completo!" -ForegroundColor Green
+    Write-Host "======================================" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "📊 Status do Cluster:" -ForegroundColor Cyan
+    Write-Host "Pods:" -ForegroundColor Gray
+    kubectl get pods -o wide
+    Write-Host "`nServices:" -ForegroundColor Gray
+    kubectl get svc
+    Write-Host ""
+    Write-Host "🌐 URLs de Acesso:" -ForegroundColor Cyan
+    Write-Host "  - Users API:           http://localhost:30080"
+    Write-Host "  - Catalog API:         http://localhost:30081"
+    Write-Host "  - RabbitMQ Management: http://localhost:31672 (admin/admin123)"
+    Write-Host ""
+    Write-Host "📝 Comandos úteis:" -ForegroundColor Cyan
+    Write-Host "  - Ver pods:            kubectl get pods"
+    Write-Host "  - Ver services:        kubectl get svc"
+    Write-Host "  - Ver logs:            kubectl logs <pod-name>"
+    Write-Host "  - Entrar no pod:       kubectl exec -it <pod-name> -- /bin/bash"
+    Write-Host "  - Descrever pod:       kubectl describe pod <pod-name>"
+    Write-Host "  - Port-forward:        kubectl port-forward svc/<service-name> 8080:80"
+    Write-Host "  - Deletar cluster:     kind delete cluster --name fcg-cluster"
+    Write-Host "  - Utils kubectl:       .\scripts\kubectl-utils.ps1 [status|logs|shell|restart]"
+    Write-Host ""
 }
 catch {
     Show-Error $_.Exception.Message
