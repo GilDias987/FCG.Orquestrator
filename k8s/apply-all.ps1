@@ -26,7 +26,6 @@ try {
     Write-Host "`nAplicando Catalog API..." -ForegroundColor Yellow
     kubectl apply -f catalog-api/
 
-    Descomentar quando estiverem prontos
     Write-Host "`nAplicando Payments API..." -ForegroundColor Yellow
     kubectl apply -f payments-api/
 
