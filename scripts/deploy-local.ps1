@@ -132,6 +132,7 @@ try {
     Write-Host "URLs de Acesso:" -ForegroundColor Cyan
     Write-Host "  - Users API:           http://localhost:30080"
     Write-Host "  - Catalog API:         http://localhost:30081"
+    Write-Host "  - Payments API:        http://localhost:30082"
     Write-Host "  - RabbitMQ Management: http://localhost:31672 (admin/admin123)"
     Write-Host ""
     Write-Host "Comandos uteis:" -ForegroundColor Cyan
