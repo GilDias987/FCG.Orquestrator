@@ -26,7 +26,6 @@ try {
     }
     Write-Host "✓ users-api:latest encontrada" -ForegroundColor Green
 
-    TODO: Uncomment when Payments API is ready
     Write-Host "Verificando payments-api:latest..." -ForegroundColor Yellow
     $paymentsImage = docker images payments-api:latest --format "{{.Repository}}:{{.Tag}}" 2>$null
 
