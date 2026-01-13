@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payments-api-config
+  labels:
+    app: payments-api
+data:
+  rabbitHost: "rabbitmq"
+
+  # colocar nome das filas aqui quando tiver mais detalhes

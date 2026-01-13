@@ -81,12 +81,12 @@ try {
         Write-Host "  Users SQL Server ainda inicializando (verifique: kubectl get pods)" -ForegroundColor Yellow 
     }
 
-    # kubectl wait --for=condition=ready pod -l app=payments-sqlserver --timeout="${sqlTimeout}s" 2>$null
-    # if ($LASTEXITCODE -eq 0) { 
-    #     Write-Host "  Payments SQL Server pronto" -ForegroundColor Green
-    # } else {
-    #     Write-Host "  Payments SQL Server ainda inicializando" -ForegroundColor Yellow
-    # }
+    kubectl wait --for=condition=ready pod -l app=payments-sqlserver --timeout="${sqlTimeout}s" 2>$null
+    if ($LASTEXITCODE -eq 0) { 
+        Write-Host "  Payments SQL Server pronto" -ForegroundColor Green
+    } else {
+        Write-Host "  Payments SQL Server ainda inicializando" -ForegroundColor Yellow
+    }
     
     # kubectl wait --for=condition=ready pod -l app=notifications-sqlserver --timeout="${sqlTimeout}s" 2>$null
     # if ($LASTEXITCODE -eq 0) {
