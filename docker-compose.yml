@@ -72,6 +72,45 @@ services:
     volumes:
       - users-sqlserver-data:/var/opt/mssql
 
+      
+  # Payments API
+  payments-api:
+    build:
+      context: ../FCG.Payments/FCG.Payments
+      dockerfile: FCG.Payments.WebAPI/Dockerfile
+    container_name: Payments-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=payments-sqlserver;Database=FCGPayments;User Id=sa;Password=pass@123;TrustServerCertificate=True
+      - Jwt__Issuer=fcg-payments
+      - Jwt__Key=super_secret_dev_key_change_me
+      - Rabbit__Host=rabbitmq
+    ports:
+      - "8080:8080"
+    depends_on:
+      - payments-sqlserver
+      - rabbitmq
+    networks:
+      - fcg-net
+
+
+  # SQL Server - Payments
+  payments-sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: payments-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=pass@123
+      - MSSQL_PID=Developer
+    ports:
+      - "1434:1433"
+    networks:
+      - fcg-net
+    volumes:
+      - payments-sqlserver-data:/var/opt/mssql
+
+
   # RabbitMQ (compartilhado)
   rabbitmq:
     image: rabbitmq:3.12-management-alpine
@@ -91,6 +130,7 @@ volumes:
   catalog-sqlserver-data:
   users-sqlserver-data:
   rabbitmq-data:
+  payments-sqlserver-data:
 
 networks:
   fcg-net:
