@@ -35,10 +35,10 @@ try {
     }
 
     # TODO: Build Payments API when ready
-    # Write-Host "`nBuild Payments API..." -ForegroundColor Yellow
-    # docker build -t payments-api:latest `
-    #     -f "$REPOS_DIR\FCG.Payments\FCG.Payments\FCG.Payments.WebAPI\Dockerfile" `
-    #     "$REPOS_DIR\FCG.Payments\FCG.Payments"
+    Write-Host "`nBuild Payments API..." -ForegroundColor Yellow
+    docker build -t payments-api:latest `
+        -f "$REPOS_DIR\FCG.Payments\FCG.Payments\FCG.Payments.WebAPI\Dockerfile" `
+        "$REPOS_DIR\FCG.Payments\FCG.Payments"
 
     # TODO: Build Notifications API when ready
     # Write-Host "`nBuild Notifications API..." -ForegroundColor Yellow

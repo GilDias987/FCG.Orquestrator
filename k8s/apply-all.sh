@@ -5,6 +5,12 @@ set -e
 echo 'Applying namespace'
 kubectl apply -f namespaces/
 
+echo 'Applying SQL Servers'
+kubectl apply -f catalog-sqlserver/
+kubectl apply -f users-sqlserver/
+# kubectl apply -f payments-sqlserver/
+# kubectl apply -f notifications-sqlserver/
+
 echo 'Applying RabbitMQ'
 kubectl apply -f rabbitmq/
 
