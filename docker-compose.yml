@@ -104,7 +104,7 @@ services:
       - SA_PASSWORD=pass@123
       - MSSQL_PID=Developer
     ports:
-      - "1434:1433"
+      - "1435:1433"
     networks:
       - fcg-net
     volumes:
