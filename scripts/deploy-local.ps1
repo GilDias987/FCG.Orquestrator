@@ -87,13 +87,6 @@ try {
     } else {
         Write-Host "  Payments SQL Server ainda inicializando" -ForegroundColor Yellow
     }
-    
-    # kubectl wait --for=condition=ready pod -l app=notifications-sqlserver --timeout="${sqlTimeout}s" 2>$null
-    # if ($LASTEXITCODE -eq 0) {
-    #     Write-Host "  Notifications SQL Server pronto" -ForegroundColor Green
-    # } else {
-    #     Write-Host "  Notifications SQL Server ainda inicializando" -ForegroundColor Yellow
-    # }
 
     Write-Host "`nAguardando RabbitMQ..." -ForegroundColor Yellow
     kubectl wait --for=condition=ready pod -l app=rabbitmq --timeout="${appTimeout}s" 2>$null
@@ -117,6 +110,21 @@ try {
     } else {
         Write-Host "  Users API ainda inicializando" -ForegroundColor Yellow 
     }
+
+    kubectl wait --for=condition=ready pod -l app=payments-api --timeout="${appTimeout}s" 2>$null
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "  Payments API pronto" -ForegroundColor Green
+    } else {
+        Write-Host "  Payments API ainda inicializando" -ForegroundColor Yellow
+    }
+
+        kubectl wait --for=condition=ready pod -l app=notification-api --timeout="${appTimeout}s" 2>$null
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "  Notification API pronto" -ForegroundColor Green
+        } else {
+            Write-Host "  Notification API ainda inicializando" -ForegroundColor Yellow
+        }
+
     Write-Host ""
 
     # Exibir status
@@ -130,9 +138,10 @@ try {
     kubectl get svc
     Write-Host ""
     Write-Host "URLs de Acesso:" -ForegroundColor Cyan
-    Write-Host "  - Users API:           http://localhost:30080"
-    Write-Host "  - Catalog API:         http://localhost:30081"
-    Write-Host "  - Payments API:        http://localhost:30082"
+    Write-Host "  - Users API:               http://localhost:30080"
+    Write-Host "  - Catalog API:            http://localhost:30081"
+    Write-Host "  - Payments API:         http://localhost:30082"
+    Write-Host "  - Notification API:    http://localhost:30083"
     Write-Host "  - RabbitMQ Management: http://localhost:31672 (admin/admin123)"
     Write-Host ""
     Write-Host "Comandos uteis:" -ForegroundColor Cyan

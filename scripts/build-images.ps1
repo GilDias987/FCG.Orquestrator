@@ -34,17 +34,17 @@ try {
         throw "Falha ao buildar Users API"
     }
 
-    # TODO: Build Payments API when ready
+    # Build Payments API when ready
     Write-Host "`nBuild Payments API..." -ForegroundColor Yellow
     docker build -t payments-api:latest `
         -f "$REPOS_DIR\FCG.Payments\FCG.Payments\FCG.Payments.WebAPI\Dockerfile" `
         "$REPOS_DIR\FCG.Payments\FCG.Payments"
 
-    # TODO: Build Notifications API when ready
-    # Write-Host "`nBuild Notifications API..." -ForegroundColor Yellow
-    # docker build -t notifications-api:latest `
-    #     -f "$REPOS_DIR\FCG.Notifications\FCG.Notifications\FCG.Notifications.WebAPI\Dockerfile" `
-    #     "$REPOS_DIR\FCG.Notifications\FCG.Notifications"
+    # Build Notification API when ready
+    Write-Host "`nBuild Notification API..." -ForegroundColor Yellow
+    docker build -t notification-api:latest `
+        -f "$REPOS_DIR\FCG.Notification\FCG.Notification\FCG.Notification.WebAPI\Dockerfile" `
+        "$REPOS_DIR\FCG.Notification\FCG.Notification"
 
     Write-Host "`n✅ Todas as imagens foram buildadas com sucesso!" -ForegroundColor Green
 }

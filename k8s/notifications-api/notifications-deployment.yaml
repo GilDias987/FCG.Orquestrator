@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-api-deployment
+  labels:
+    app: notification-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-api
+  template:
+    metadata:
+      labels:
+        app: notification-api
+    spec:
+      containers:
+        - name: notification-api
+          image: notification-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Development"
+            - name: ASPNETCORE_URLS
+              value: "http://+:8080"
+            - name: Jwt__Issuer
+              valueFrom:
+                secretKeyRef:
+                  name: notification-api-secret
+                  key: jwtIssuer
+            - name: Rabbit__Host
+              valueFrom:
+                configMapKeyRef:
+                  name: notification-api-config
+                  key: rabbitHost

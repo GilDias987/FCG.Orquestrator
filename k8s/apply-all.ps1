@@ -15,7 +15,6 @@ try {
     kubectl apply -f catalog-sqlserver/
     kubectl apply -f users-sqlserver/
     kubectl apply -f payments-sqlserver/
-    # kubectl apply -f notifications-sqlserver/
 
     Write-Host "`nAplicando RabbitMQ..." -ForegroundColor Yellow
     kubectl apply -f rabbitmq/
@@ -29,8 +28,8 @@ try {
     Write-Host "`nAplicando Payments API..." -ForegroundColor Yellow
     kubectl apply -f payments-api/
 
-    # Write-Host "`nAplicando Notifications API..." -ForegroundColor Yellow
-    # kubectl apply -f notifications-api/
+    Write-Host "`nAplicando Notifications API..." -ForegroundColor Yellow
+    kubectl apply -f notifications-api/
 
     Write-Host "`n✅ Todos os recursos foram aplicados com sucesso!" -ForegroundColor Green
 }

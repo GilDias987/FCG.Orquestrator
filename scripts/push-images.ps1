@@ -29,9 +29,9 @@ try {
     Write-Host "Verificando payments-api:latest..." -ForegroundColor Yellow
     $paymentsImage = docker images payments-api:latest --format "{{.Repository}}:{{.Tag}}" 2>$null
 
-    # TODO: Uncomment when Notifications API is ready
-    # Write-Host "Verificando notifications-api:latest..." -ForegroundColor Yellow
-    # $notificationsImage = docker images notifications-api:latest --format "{{.Repository}}:{{.Tag}}" 2>$null
+    # TODO: Uncomment when Notification API is ready
+    Write-Host "Verificando notification-api:latest..." -ForegroundColor Yellow
+    $notificationImage = docker images notification-api:latest --format "{{.Repository}}:{{.Tag}}" 2>$null
 
     Write-Host "`n✅ Todas as imagens estão disponíveis!" -ForegroundColor Green
     Write-Host "`nNota: Com Docker Desktop Kubernetes, as imagens locais são automaticamente disponíveis no cluster" -ForegroundColor Gray
