@@ -29,9 +29,10 @@ try {
     
     Write-Host "`n✅ Cluster Kubernetes está pronto!" -ForegroundColor Green
     Write-Host "`nEndpoints (NodePort):" -ForegroundColor Cyan
-    Write-Host "  - Users API:           http://localhost:30080"
-    Write-Host "  - Catalog API:         http://localhost:30081"
-    Write-Host "  - Payments API:        http://localhost:30082"
+    Write-Host "  - Users API:               http://localhost:30080"
+    Write-Host "  - Catalog API:            http://localhost:30081"
+    Write-Host "  - Payments API:         http://localhost:30082"
+    Write-Host "  - Notification API:    http://localhost:30083"
     Write-Host "  - RabbitMQ AMQP:       localhost:30672"
     Write-Host "  - RabbitMQ Management: http://localhost:31672"
     Write-Host "`nNota: Certifique-se de que o Kubernetes do Docker Desktop está habilitado" -ForegroundColor Gray

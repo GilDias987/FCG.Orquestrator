@@ -24,16 +24,16 @@ docker build -t users-api:latest \
   -f "$REPOS_DIR/FCG.Users/FCG.Users/FCG.Users.WebAPI/Dockerfile" \
   "$REPOS_DIR/FCG.Users/FCG.Users"
 
-# TODO: Build Payments API when ready
-# echo "Building Payments API..."
-# docker build -t payments-api:latest \
-#   -f "$REPOS_DIR/FCG.Payments/FCG.Payments/FCG.Payments.WebAPI/Dockerfile" \
-#   "$REPOS_DIR/FCG.Payments/FCG.Payments"
+# Build Payments API when ready
+ echo "Building Payments API..."
+ docker build -t payments-api:latest \
+   -f "$REPOS_DIR/FCG.Payments/FCG.Payments/FCG.Payments.WebAPI/Dockerfile" \
+   "$REPOS_DIR/FCG.Payments/FCG.Payments"
 
-# TODO: Build Notifications API when ready
-# echo "Building Notifications API..."
-# docker build -t notifications-api:latest \
-#   -f "$REPOS_DIR/FCG.Notifications/FCG.Notifications/FCG.Notifications.WebAPI/Dockerfile" \
-#   "$REPOS_DIR/FCG.Notifications/FCG.Notifications"
+# Build Notification API when ready
+ echo "Building Notification API..."
+ docker build -t notification-api:latest \
+   -f "$REPOS_DIR/FCG.Notification/FCG.Notification/FCG.Notification.WebAPI/Dockerfile" \
+   "$REPOS_DIR/FCG.Notification/FCG.Notification"
 
 echo "✅ Todas as imagens foram buildadas com sucesso!"

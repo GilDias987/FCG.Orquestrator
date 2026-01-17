@@ -111,6 +111,26 @@ services:
       - payments-sqlserver-data:/var/opt/mssql
 
 
+  # Payments API
+  notifications-api:
+    build:
+      context: ../FCG.Notification/FCG.Notification
+      dockerfile: FCG.Notification.WebAPI/Dockerfile
+    container_name: notifications-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - Jwt__Issuer=fcg-notifications
+      - Jwt__Key=super_secret_dev_key_change_me
+      - Rabbit__Host=rabbitmq
+    ports:
+      - "8083:8080"
+    depends_on:
+      - rabbitmq
+    networks:
+      - fcg-net
+
+
   # RabbitMQ (compartilhado)
   rabbitmq:
     image: rabbitmq:3.12-management-alpine
