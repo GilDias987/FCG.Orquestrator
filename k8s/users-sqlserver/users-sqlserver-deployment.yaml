@@ -31,7 +31,7 @@ spec:
                   name: users-sqlserver-secret
                   key: SA_PASSWORD
           volumeMounts:
-            - name: sqlserver-data
+            - name: users-sqlserver-data
               mountPath: /var/opt/mssql
           resources:
             requests:
