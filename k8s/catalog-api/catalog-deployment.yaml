@@ -6,6 +6,11 @@ metadata:
     app: catalog-api
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       app: catalog-api
@@ -17,7 +22,7 @@ spec:
       containers:
         - name: catalog-api
           image: catalog-api:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
