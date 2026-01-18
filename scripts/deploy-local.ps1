@@ -59,41 +59,6 @@ try {
     Pop-Location
     Write-Host ""
 
-    # 5. Atualizar imagens dos deployments com a nova tag
-    Write-Host "5/5: Atualizando imagens dos deployments..." -ForegroundColor Yellow
-    $TAG_FILE = Join-Path $SCRIPT_DIR ".image-tag"
-    if (Test-Path $TAG_FILE) {
-        $IMAGE_TAG = Get-Content $TAG_FILE
-        Write-Host "Aplicando tag: $IMAGE_TAG" -ForegroundColor Gray
-        
-        # Atualizar cada deployment com a nova imagem
-        $deployments = @(
-            @{name="catalog-api-deployment"; image="catalog-api"},
-            @{name="users-api-deployment"; image="users-api"},
-            @{name="payments-api-deployment"; image="payments-api"},
-            @{name="notification-api-deployment"; image="notification-api"}
-        )
-        
-        foreach ($deploy in $deployments) {
-            $result = kubectl set image deployment/$($deploy.name) `
-                $($deploy.image)=$($deploy.image):$IMAGE_TAG 2>&1
-            if ($LASTEXITCODE -eq 0) {
-                Write-Host "  ✓ $($deploy.name) atualizado" -ForegroundColor Green
-            } else {
-                Write-Host "  ⚠ $($deploy.name): $result" -ForegroundColor Yellow
-            }
-        }
-        
-        Write-Host "`nAguardando rollout dos deployments..." -ForegroundColor Gray
-        kubectl rollout status deployment/catalog-api-deployment --timeout=60s 2>&1 | Out-Null
-        kubectl rollout status deployment/users-api-deployment --timeout=60s 2>&1 | Out-Null
-        kubectl rollout status deployment/payments-api-deployment --timeout=60s 2>&1 | Out-Null
-        kubectl rollout status deployment/notification-api-deployment --timeout=60s 2>&1 | Out-Null
-    } else {
-        Write-Host "  Arquivo de tag não encontrado, usando latest" -ForegroundColor Yellow
-    }
-    Write-Host ""
-
     # Aguardar pods ficarem prontos
     Write-Host "======================================" -ForegroundColor Cyan
     Write-Host "Aguardando Pods Inicializarem" -ForegroundColor Cyan
