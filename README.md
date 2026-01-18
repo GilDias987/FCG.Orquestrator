@@ -180,10 +180,12 @@ kubectl delete all --all
 
 | Script | Descrição |
 |--------|-----------|
-| `deploy-local.ps1` | **Deploy completo automático** |
+| `deploy-local.ps1` | **Deploy completo automático com logs detalhados** |
 | `build-images.ps1` | Build de todas as imagens Docker |
 | `kind-create-cluster.ps1` | Verifica cluster Kubernetes disponível |
 | `push-images.ps1` | Verifica imagens Docker disponíveis |
+| `diagnose.ps1` | **Diagnóstico completo do cluster e troubleshooting** |
+| `cleanup.ps1` | **Limpa todos os recursos do Kubernetes** |
 | `kubectl-utils.ps1` | Utilitários kubectl (logs, shell, status, etc) |
 
 ### Bash (Linux/Mac)
@@ -194,6 +196,32 @@ kubectl delete all --all
 | `build-images.sh` | Build de todas as imagens Docker |
 | `kind-create-cluster.sh` | Verifica cluster Kubernetes disponível |
 | `push-images.sh` | Verifica imagens Docker disponíveis |
+
+### 🔍 Novo: Script de Diagnóstico
+
+Execute quando tiver problemas com o deploy:
+
+```powershell
+.\scripts\diagnose.ps1
+```
+
+Este script fornece:
+- ✅ Status detalhado de todos os pods
+- ✅ Identificação de pods com problemas
+- ✅ Eventos recentes do cluster
+- ✅ Logs dos pods com erro
+- ✅ Teste de conectividade com as APIs
+- ✅ Recomendações de troubleshooting
+
+### 🧹 Novo: Script de Limpeza
+
+Limpe completamente o ambiente:
+
+```powershell
+.\scripts\cleanup.ps1
+```
+
+Remove todos os recursos do Kubernetes de forma segura.
 
 ## 📁 Estrutura do Projeto
 
@@ -274,6 +302,16 @@ As variáveis são configuradas nos arquivos:
 
 ## 🐛 Troubleshooting
 
+### Diagnóstico Automático (Recomendado)
+
+Execute o script de diagnóstico completo:
+
+```powershell
+.\scripts\diagnose.ps1
+```
+
+Este script identifica automaticamente problemas e fornece recomendações.
+
 ### Docker Compose
 
 ```powershell
@@ -287,44 +325,149 @@ docker-compose logs --tail=100 catalog-api
 
 ### Kubernetes
 
-```powershell
-# Ver eventos do cluster
-kubectl get events --sort-by='.lastTimestamp'
+#### Comandos Rápidos de Diagnóstico
 
-# Ver logs de um pod com erro
+```powershell
+# Status geral dos pods
+kubectl get pods -o wide
+
+# Ver eventos recentes
+kubectl get events --sort-by='.lastTimestamp' | Select-Object -Last 20
+
+# Logs de um pod específico
+kubectl logs <pod-name>
+
+# Logs do container anterior (útil para crashloop)
 kubectl logs <pod-name> --previous
 
-# Reiniciar deployment
-kubectl rollout restart deployment catalog-api-deployment
+# Detalhes completos de um pod
+kubectl describe pod <pod-name>
 
-# Limpar todos os recursos e redeployar
-kubectl delete all --all
+# Executar diagnóstico completo
+.\scripts\diagnose.ps1
+```
+
+#### Soluções para Problemas Comuns
+
+**1. Pods em Pending/Waiting:**
+```powershell
+# Verificar se há recursos suficientes
+kubectl describe pod <pod-name>
+
+# Verificar PVCs
+kubectl get pvc
+
+# Verificar se imagens foram criadas
+docker images | findstr "catalog-api\|users-api"
+```
+
+**2. Pods em CrashLoopBackOff:**
+```powershell
+# Ver logs do crash
+kubectl logs <pod-name> --previous
+
+# Verificar configurações
+kubectl get configmap <configmap-name> -o yaml
+kubectl get secret <secret-name> -o yaml
+
+# Executar diagnóstico
+.\scripts\diagnose.ps1
+```
+
+**3. Pods em ImagePullBackOff:**
+```powershell
+# Rebuildar imagens
+.\scripts\build-images.ps1
+
+# Verificar imagens disponíveis
+docker images
+
+# Verificar imagePullPolicy nos deployments
+kubectl get deployment <deployment-name> -o yaml | Select-String "imagePullPolicy"
+```
+
+**4. Timeout durante deploy:**
+```powershell
+# Os init containers aguardam dependências
+# Verifique se SQL Server e RabbitMQ estão prontos primeiro
+kubectl get pods -l app=catalog-sqlserver
+kubectl get pods -l app=users-sqlserver
+kubectl get pods -l app=rabbitmq
+
+# Ver logs dos init containers
+kubectl logs <pod-name> -c wait-for-sqlserver
+kubectl logs <pod-name> -c wait-for-rabbitmq
+
+# Aumentar timeout (já configurado para 3-4 minutos)
+# Se ainda assim não funcionar, verificar recursos do sistema
+```
+
+**5. Health checks falhando:**
+```powershell
+# Verificar se endpoint /health existe
+kubectl port-forward <pod-name> 8080:8080
+# Acessar http://localhost:8080/health no navegador
+
+# Ver logs da aplicação
+kubectl logs <pod-name> -f
+```
+
+**6. Conectividade entre serviços:**
+```powershell
+# Testar DNS interno
+kubectl run test-pod --image=busybox --rm -it -- nslookup catalog-api
+
+# Testar conectividade
+kubectl run test-pod --image=busybox --rm -it -- wget -O- http://catalog-api:8080/health
+```
+
+### Limpar e Redeployar
+
+Se nada funcionar, limpe tudo e redeploy:
+
+```powershell
+# Limpeza segura com confirmação
+.\scripts\cleanup.ps1
+
+# Ou força bruta
+kubectl delete all --all --force --grace-period=0
+kubectl delete pvc --all
+
+# Aguardar limpeza
+Start-Sleep -Seconds 10
+
+# Redeploy completo
 .\scripts\deploy-local.ps1
 ```
 
-### Problemas comuns
+### Outros Problemas Comuns
 
 **Porta em uso:**
 ```powershell
 # Windows - Ver processo usando porta
 netstat -ano | findstr :8080
 taskkill /PID <PID> /F
+
+# Linux/Mac
+lsof -i :8080
+kill -9 <PID>
 ```
 
-**Imagem não encontrada:**
+**Recursos insuficientes:**
 ```powershell
-# Rebuildar imagens
-.\scripts\build-images.ps1
+# Aumentar recursos no Docker Desktop
+# Settings → Resources → Aumentar CPU/Memory
 
-# Verificar se as imagens existem
-docker images | findstr "catalog-api\|users-api"
+# Verificar uso atual
+docker stats
 ```
 
-**Pods em CrashLoopBackOff:**
+**Volumes com permissão incorreta:**
 ```powershell
-# Ver logs do pod
-kubectl logs <pod-name>
-kubectl describe pod <pod-name>
+# Remover volumes e recriar
+docker volume ls
+docker volume rm <volume-name>
+kubectl delete pvc --all
 ```
 
 ## 📚 Recursos Adicionais

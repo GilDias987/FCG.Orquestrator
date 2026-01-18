@@ -14,6 +14,13 @@ spec:
       labels:
         app: catalog-api
     spec:
+      initContainers:
+        - name: wait-for-sqlserver
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z catalog-sqlserver 1433; do echo "Aguardando SQL Server..."; sleep 5; done; echo "SQL Server disponível!"']
+        - name: wait-for-rabbitmq
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z rabbitmq 5672; do echo "Aguardando RabbitMQ..."; sleep 5; done; echo "RabbitMQ disponível!"']
       containers:
         - name: catalog-api
           image: catalog-api:latest
@@ -60,3 +67,34 @@ spec:
                 configMapKeyRef:
                   name: catalog-api-config
                   key: API__USER
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
