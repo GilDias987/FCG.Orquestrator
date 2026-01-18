@@ -53,6 +53,7 @@ spec:
             periodSeconds: 30
             timeoutSeconds: 10
       volumes:
-        - name: sqlserver-data
-          persistentVolumeClaim:
-            claimName: catalog-sqlserver-pvc
+        - name: catalog-sqlserver-data
+          hostPath:
+            path: /var/lib/docker/volumes/fcgorquestrator_catalog-sqlserver-data/_data
+            type: DirectoryOrCreate

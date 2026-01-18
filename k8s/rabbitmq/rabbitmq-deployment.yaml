@@ -74,7 +74,9 @@ spec:
             timeoutSeconds: 5
       volumes:
         - name: rabbitmq-data
-          emptyDir: {}
+          hostPath:
+            path: /var/lib/docker/volumes/fcgorquestrator_rabbitmq-data/_data
+            type: DirectoryOrCreate
         - name: rabbitmq-config
           configMap:
             name: rabbitmq-config
