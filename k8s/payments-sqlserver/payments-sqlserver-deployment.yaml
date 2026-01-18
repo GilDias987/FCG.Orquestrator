@@ -42,6 +42,5 @@ spec:
               cpu: "1000m"
       volumes:
         - name: payments-sqlserver-data
-          hostPath:
-            path: /var/lib/docker/volumes/fcgorquestrator_payments-sqlserver-data/_data
-            type: DirectoryOrCreate
+          persistentVolumeClaim:
+            claimName: payments-sqlserver-pvc
