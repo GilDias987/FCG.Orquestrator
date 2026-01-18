@@ -74,9 +74,8 @@ spec:
             timeoutSeconds: 5
       volumes:
         - name: rabbitmq-data
-          hostPath:
-            path: /var/lib/docker/volumes/fcgorquestrator_rabbitmq-data/_data
-            type: DirectoryOrCreate
+          persistentVolumeClaim:
+            claimName: rabbitmq-pvc
         - name: rabbitmq-config
           configMap:
             name: rabbitmq-config
