@@ -5,6 +5,11 @@ metadata:
   labels:
     app: notification-api
 data:
-  rabbitHost: "rabbitmq"
-
-  # colocar nome das filas aqui quando tiver mais detalhes
+  RABBITMQ__URL: "rabbitmq"
+  RABBITMQ__USERNAME: "admin"
+  SMTP__SERVER: "smtp.gmail.com"
+  SMTP__PORT: "587"
+  SMTP__USER: "fiapclound@gmail.com"
+  LOGGING__LOGLEVEL__DEFAULT: "Information"
+  LOGGING__LOGLEVEL__MICROSOFT.ASPNETCORE: "Warning"
+  ALLOWEDHOSTS: "*"

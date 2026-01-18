@@ -5,6 +5,9 @@ metadata:
   labels:
     app: catalog-api
 data:
-  rabbitHost: "rabbitmq"
-
-  # colocar nome das filas aqui quando tiver mais detalhes
+  RABBITMQ__URL: "rabbitmq"
+  RABBITMQ__USERNAME: "admin"
+  API__USER: "http://users-api:8080/"
+  LOGGING__LOGLEVEL__DEFAULT: "Information"
+  LOGGING__LOGLEVEL__MICROSOFT.ASPNETCORE: "Warning"
+  ALLOWEDHOSTS: "*"
