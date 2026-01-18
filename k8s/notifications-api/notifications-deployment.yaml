@@ -25,13 +25,38 @@ spec:
               value: "Development"
             - name: ASPNETCORE_URLS
               value: "http://+:8080"
-            - name: Jwt__Issuer
-              valueFrom:
-                secretKeyRef:
-                  name: notification-api-secret
-                  key: jwtIssuer
-            - name: Rabbit__Host
+            - name: Rabbitmq__Url
               valueFrom:
                 configMapKeyRef:
                   name: notification-api-config
-                  key: rabbitHost
+                  key: RABBITMQ__URL
+            - name: Rabbitmq__Username
+              valueFrom:
+                configMapKeyRef:
+                  name: notification-api-config
+                  key: RABBITMQ__USERNAME
+            - name: Rabbitmq__Password
+              valueFrom:
+                secretKeyRef:
+                  name: notification-api-secret
+                  key: RABBITMQ__PASSWORD
+            - name: Smtp__Server
+              valueFrom:
+                configMapKeyRef:
+                  name: notification-api-config
+                  key: SMTP__SERVER
+            - name: Smtp__Port
+              valueFrom:
+                configMapKeyRef:
+                  name: notification-api-config
+                  key: SMTP__PORT
+            - name: Smtp__User
+              valueFrom:
+                configMapKeyRef:
+                  name: notification-api-config
+                  key: SMTP__USER
+            - name: Smtp__Password
+              valueFrom:
+                secretKeyRef:
+                  name: notification-api-secret
+                  key: SMTP__PASSWORD

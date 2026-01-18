@@ -25,23 +25,33 @@ spec:
               value: "Development"
             - name: ASPNETCORE_URLS
               value: "http://+:8080"
-            - name: ConnectionStrings__DefaultConnection
+            - name: ConnectionStrings__ConnectionStrings
               valueFrom:
                 secretKeyRef:
                   name: payments-api-secret
-                  key: connectionString
+                  key: CONNECTIONSTRINGS__CONNECTIONSTRINGS
             - name: Jwt__Issuer
               valueFrom:
                 secretKeyRef:
                   name: payments-api-secret
-                  key: jwtIssuer
+                  key: JWT__ISSUER
             - name: Jwt__Key
               valueFrom:
                 secretKeyRef:
                   name: payments-api-secret
-                  key: jwtKey
-            - name: Rabbit__Host
+                  key: JWT__KEY
+            - name: Rabbitmq__Url
               valueFrom:
                 configMapKeyRef:
                   name: payments-api-config
-                  key: rabbitHost
+                  key: RABBITMQ__URL
+            - name: Rabbitmq__Username
+              valueFrom:
+                configMapKeyRef:
+                  name: payments-api-config
+                  key: RABBITMQ__USERNAME
+            - name: Rabbitmq__Password
+              valueFrom:
+                secretKeyRef:
+                  name: payments-api-secret
+                  key: RABBITMQ__PASSWORD
