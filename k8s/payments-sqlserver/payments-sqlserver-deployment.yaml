@@ -31,7 +31,7 @@ spec:
                   name: payments-sqlserver-secret
                   key: SA_PASSWORD
           volumeMounts:
-            - name: sqlserver-data
+            - name: payments-sqlserver-data
               mountPath: /var/opt/mssql
           resources:
             requests:
@@ -41,6 +41,7 @@ spec:
               memory: "2Gi"
               cpu: "1000m"
       volumes:
-        - name: sqlserver-data
-          persistentVolumeClaim:
-            claimName: payments-sqlserver-pvc
+        - name: payments-sqlserver-data
+          hostPath:
+            path: /var/lib/docker/volumes/fcgorquestrator_payments-sqlserver-data/_data
+            type: DirectoryOrCreate
