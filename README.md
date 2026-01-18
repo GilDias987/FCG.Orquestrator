@@ -181,8 +181,7 @@ kubectl delete all --all
 | Script | Descrição |
 |--------|-----------|
 | `deploy-local.ps1` | **Deploy completo automático com logs detalhados** |
-| `build-images.ps1` | Build de todas as imagens Docker com tags timestampadas |
-| `update-deployment.ps1` | **Atualiza deployment específico sem rebuild** |
+| `build-images.ps1` | Build de todas as imagens Docker |
 | `kind-create-cluster.ps1` | Verifica cluster Kubernetes disponível |
 | `push-images.ps1` | Verifica imagens Docker disponíveis |
 | `diagnose.ps1` | **Diagnóstico completo do cluster e troubleshooting** |
@@ -213,35 +212,6 @@ Este script fornece:
 - ✅ Logs dos pods com erro
 - ✅ Teste de conectividade com as APIs
 - ✅ Recomendações de troubleshooting
-
-### 🔄 Novo: Rolling Updates Automáticos
-
-O sistema agora suporta **atualizações sem downtime**! Quando você faz alterações no código:
-
-```powershell
-# Opção 1: Deploy completo (rebuild + update automático)
-.\scripts\deploy-local.ps1
-
-# Opção 2: Atualizar apenas um serviço específico (mais rápido)
-.\scripts\update-deployment.ps1 -Service users      # Atualiza apenas Users API
-.\scripts\update-deployment.ps1 -Service catalog    # Atualiza apenas Catalog API
-.\scripts\update-deployment.ps1 -Service payments   # Atualiza apenas Payments API
-.\scripts\update-deployment.ps1 -Service notification # Atualiza apenas Notification API
-.\scripts\update-deployment.ps1 -Service all        # Atualiza todos (padrão)
-```
-
-**Como funciona:**
-- 🏷️ Cada build gera uma tag única com timestamp (ex: `20260118-143052`)
-- ♻️ Deployments usam estratégia `RollingUpdate` (maxSurge: 1, maxUnavailable: 0)
-- 🔄 Kubernetes automaticamente substitui pods antigos por novos
-- ✅ Zero downtime: sempre mantém pelo menos 1 pod rodando
-- 🚀 Pods são recriados automaticamente com a nova versão
-
-**Benefícios:**
-- ❌ **Não precisa mais deletar pods manualmente**
-- ✅ Atualizações suaves sem interrupção de serviço
-- ✅ Rollback automático em caso de falha
-- ✅ Health checks garantem que novos pods estão prontos antes de remover os antigos
 
 ### 🧹 Novo: Script de Limpeza
 

@@ -5,6 +5,3 @@
 /.idea/modules.xml
 /.idea/php.xml
 /.idea/vcs.xml
-
-# Build artifacts
-scripts/.image-tag
