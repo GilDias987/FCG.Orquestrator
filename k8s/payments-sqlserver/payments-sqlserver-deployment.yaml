@@ -40,6 +40,18 @@ spec:
             limits:
               memory: "2Gi"
               cpu: "1000m"
+          readinessProbe:
+            tcpSocket:
+              port: 1433
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 1433
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
       volumes:
         - name: payments-sqlserver-data
           persistentVolumeClaim:
